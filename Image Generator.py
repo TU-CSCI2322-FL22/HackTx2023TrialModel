@@ -61,7 +61,7 @@ def main():
         if image:
             st.image(image, caption=text, use_column_width=True)
             imageName = citations + ".jpeg"
-            download_button_str = download_button(image, imageName, 'Download image')
+            download_button_str = download_button(image, imageName, 'Download Image')
             col2.markdown(download_button_str, unsafe_allow_html=True)
 
             if col3.button("Upload to Gallery"):
