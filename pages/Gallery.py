@@ -11,7 +11,7 @@ try:
     firebase_admin.get_app()
 except ValueError as e:
     # If not, initialize a new default app
-    cred = credentials.Certificate("./hacktx2023-c123e-f8437760e5db.json")
+    cred = credentials.Certificate(st.secrets['firebase_config'])
     firebase_admin.initialize_app(cred, {
         'storageBucket': 'hacktx2023-c123e.appspot.com'
     })
