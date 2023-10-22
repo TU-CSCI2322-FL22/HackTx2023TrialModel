@@ -1,6 +1,20 @@
 import os
 from PIL import Image
 import streamlit as st
+import firebase_admin
+from firebase_admin import credentials, storage
+import base64
+import io
+
+
+try:
+    firebase_admin.get_app()
+except ValueError as e:
+    # If not, initialize a new default app
+    cred = credentials.Certificate("./hacktx2023-c123e-f8437760e5db.json")
+    firebase_admin.initialize_app(cred, {
+        'storageBucket': 'hacktx2023-c123e.appspot.com'
+    })
 
 
 st.title("Gallery 🖼️")
@@ -19,6 +33,47 @@ for i in range(len(img_files)):
     img_resized = img.resize((28*5, 28*5))
     columns[i % 5].write('')
     columns[i % 5].image(img_resized)
+
+def display_images_from_firebase():
+    # Get the Firebase Storage bucket
+    bucket = storage.bucket()
+
+    # List all the blobs (files) in the bucket
+    blobs = bucket.list_blobs()
+
+    # Create a list to hold the Image objects
+    images = []
+
+    # Loop through each blob
+    for blob in blobs:
+        # Download the blob data
+        blob_data = blob.download_as_text()
+
+        # The data is expected to be in the format 'data:txt;base64,{base64_data}'
+        # Split the data on the comma to separate the base64 data
+        base64_data = blob_data.split(",")[1]
+    
+
+        # Decode the base64 data to bytes
+        image_bytes = base64.b64decode(base64_data)
+
+        # Create a BytesIO object from the bytes
+        image_io = io.BytesIO(image_bytes)
+
+        # Create an Image object from the BytesIO object
+        image = Image.open(image_io)
+
+        # Append the Image object to the list of images
+        images.append(image)
+
+    # Display the images in a grid using Streamlit
+    columns = st.columns(5, gap="large")
+    for i, image in enumerate(images):
+        columns[i % 5].image(image, use_column_width=True)
+
+display_images_from_firebase()
+
+
 
 
 
