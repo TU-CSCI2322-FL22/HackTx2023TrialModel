@@ -46,7 +46,6 @@ rsa
 six
 smmap
 streamlit
-streamlit-authenticator
 tenacity
 toml
 toolz
